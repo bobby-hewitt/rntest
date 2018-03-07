@@ -12,6 +12,7 @@ import {
 
 import MapView from 'react-native-maps'
 import * as Location from './helpers/location'
+import * as Auth from './helpers/auth'
 import React, { Component } from 'react';
 import {
   Platform,
@@ -75,7 +76,7 @@ export default class App extends Component<{}> {
     return (
       <View style={styles.container}>
          <LoginButton
-          publishPermissions={["publish_actions"]}
+          readPermissions={['public_profile', 'user_friends']}
           onLoginFinished={
             (error, result) => {
               if (error) {
@@ -85,7 +86,7 @@ export default class App extends Component<{}> {
               } else {
                 AccessToken.getCurrentAccessToken().then(
                   (data) => {
-                    alert(data.accessToken.toString())
+                    Auth.login(data.accessToken.toString())
                   }
                 )
               }
