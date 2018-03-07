@@ -43,6 +43,7 @@
 		C87A123220500112001D9E7C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C87A123020500112001D9E7C /* GoogleService-Info.plist */; };
 		C87A123320500112001D9E7C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C87A123020500112001D9E7C /* GoogleService-Info.plist */; };
 		C87A123420500112001D9E7C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C87A123020500112001D9E7C /* GoogleService-Info.plist */; };
+		C87A1282205030DA001D9E7C /* libReactNativePermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C87A1280205030CD001D9E7C /* libReactNativePermissions.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -312,6 +313,13 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNFIRMessaging;
 		};
+		C87A127F205030CD001D9E7C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C87A1258205030CD001D9E7C /* ReactNativePermissions.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D23B34F1C767B80008B4819;
+			remoteInfo = ReactNativePermissions;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -345,6 +353,7 @@
 		C822F45C204FF050004B53B6 /* placeit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = placeit.entitlements; path = placeit/placeit.entitlements; sourceTree = "<group>"; };
 		C87A1229204FF9F5001D9E7C /* RNFIRMessaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNFIRMessaging.xcodeproj; path = "../node_modules/react-native-fcm/ios/RNFIRMessaging.xcodeproj"; sourceTree = "<group>"; };
 		C87A123020500112001D9E7C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C87A1258205030CD001D9E7C /* ReactNativePermissions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativePermissions.xcodeproj; path = "../node_modules/react-native-permissions/ios/ReactNativePermissions.xcodeproj"; sourceTree = "<group>"; };
 		F1CB2556346B099A0EDFB457 /* Pods-placeit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-placeit.release.xcconfig"; path = "Pods/Target Support Files/Pods-placeit/Pods-placeit.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -361,6 +370,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C87A1282205030DA001D9E7C /* libReactNativePermissions.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -541,6 +551,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				C87A1258205030CD001D9E7C /* ReactNativePermissions.xcodeproj */,
 				C87A1229204FF9F5001D9E7C /* RNFIRMessaging.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
@@ -606,6 +617,14 @@
 			isa = PBXGroup;
 			children = (
 				C87A122E204FF9F5001D9E7C /* libRNFIRMessaging.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C87A1259205030CD001D9E7C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C87A1280205030CD001D9E7C /* libReactNativePermissions.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -799,6 +818,10 @@
 				{
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+				},
+				{
+					ProductGroup = C87A1259205030CD001D9E7C /* Products */;
+					ProjectRef = C87A1258205030CD001D9E7C /* ReactNativePermissions.xcodeproj */;
 				},
 				{
 					ProductGroup = C87A122A204FF9F5001D9E7C /* Products */;
@@ -1066,6 +1089,13 @@
 			fileType = archive.ar;
 			path = libRNFIRMessaging.a;
 			remoteRef = C87A122D204FF9F5001D9E7C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C87A1280205030CD001D9E7C /* libReactNativePermissions.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libReactNativePermissions.a;
+			remoteRef = C87A127F205030CD001D9E7C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
