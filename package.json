@@ -9,6 +9,7 @@
   "dependencies": {
     "react": "16.0.0",
     "react-native": "0.51.0",
+    "react-native-background-geolocation": "^2.11.0",
     "react-native-fbsdk": "^0.7.0",
     "react-native-fcm": "^14.1.0",
     "react-native-maps": "^0.20.1",

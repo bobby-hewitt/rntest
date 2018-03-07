@@ -3,14 +3,15 @@
  * https://github.com/facebook/react-native
  * @flow
  */
-
-import * as Helpers from './helpers'
-const FBSDK = require('react-native-fbsdk');
-const {
+import BackgroundGeolocation from "react-native-background-geolocation";
+// import * as Helpers from './helpers'
+import {
   LoginButton,
   AccessToken
-} = FBSDK;
+} from 'react-native-fbsdk';
+
 import MapView from 'react-native-maps'
+import * as Location from './helpers/location'
 import React, { Component } from 'react';
 import {
   Platform,
@@ -22,20 +23,19 @@ import {
 import {registerKilledListener, registerAppListener, showLocalNotification} from "./helpers/notifications";
 import FCM, {NotificationActionType} from "react-native-fcm";
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
 export default class App extends Component<{}> {
 
-  // componentDidMount(){
-  //   // Helpers.checkPermissions(0)
-  // }
+  onError(e){
+    console.log(e)
+  }
+
+  componentWillMount(){
+    BackgroundGeolocation.on('location', Location.onLocation, this.onError);
+    // Helpers.checkPermissions(0)
+  }
 
     async componentDidMount(){
+
       registerAppListener(this.props.navigation);
       FCM.getInitialNotification().then(notif => {
         this.setState({
@@ -65,6 +65,11 @@ export default class App extends Component<{}> {
         });
       }
     }
+
+  componentWillUnmount() {
+    // Remove BackgroundGeolocation listeners
+    BackgroundGeolocation.un('location', this.onLocation);
+  }
 
   render() {
     return (
