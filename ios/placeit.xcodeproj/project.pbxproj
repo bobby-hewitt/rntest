@@ -57,6 +57,7 @@
 		C87A12FB2050503F001D9E7C /* TSBackgroundFetch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C87A12FA2050503F001D9E7C /* TSBackgroundFetch.framework */; };
 		C87A12FD20505063001D9E7C /* TSLocationManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C87A12FC20505063001D9E7C /* TSLocationManager.framework */; };
 		C87A12FF205051C4001D9E7C /* RNBackgroundFetch+AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C87A12FE205051C3001D9E7C /* RNBackgroundFetch+AppDelegate.m */; };
+		C87A13562051435F001D9E7C /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C87A133020514341001D9E7C /* libRCTCameraRoll.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -424,6 +425,13 @@
 			remoteGlobalIDString = 19D90B351BBFAA7500947169;
 			remoteInfo = "CocoaLumberjackSwift-tvOS";
 		};
+		C87A132F20514341001D9E7C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C87A131C20514341001D9E7C /* RCTCameraRoll.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 58B5115D1A9E6B3D00147676;
+			remoteInfo = RCTCameraRoll;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -471,6 +479,7 @@
 		C87A12FA2050503F001D9E7C /* TSBackgroundFetch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TSBackgroundFetch.framework; path = "../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/TSBackgroundFetch.framework"; sourceTree = "<group>"; };
 		C87A12FC20505063001D9E7C /* TSLocationManager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TSLocationManager.framework; path = "../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/TSLocationManager.framework"; sourceTree = "<group>"; };
 		C87A12FE205051C3001D9E7C /* RNBackgroundFetch+AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RNBackgroundFetch+AppDelegate.m"; sourceTree = "<group>"; };
+		C87A131C20514341001D9E7C /* RCTCameraRoll.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTCameraRoll.xcodeproj; path = "../node_modules/react-native/Libraries/CameraRoll/RCTCameraRoll.xcodeproj"; sourceTree = "<group>"; };
 		E8608142690048EF98234502 /* RCTFBSDK.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTFBSDK.xcodeproj; path = "../node_modules/react-native-fbsdk/ios/RCTFBSDK.xcodeproj"; sourceTree = "<group>"; };
 		F1CB2556346B099A0EDFB457 /* Pods-placeit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-placeit.release.xcconfig"; path = "Pods/Target Support Files/Pods-placeit/Pods-placeit.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -488,6 +497,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C87A13562051435F001D9E7C /* libRCTCameraRoll.a in Frameworks */,
 				C87A12FD20505063001D9E7C /* TSLocationManager.framework in Frameworks */,
 				C87A12FB2050503F001D9E7C /* TSBackgroundFetch.framework in Frameworks */,
 				C87A12F920505003001D9E7C /* libz.tbd in Frameworks */,
@@ -682,6 +692,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				C87A131C20514341001D9E7C /* RCTCameraRoll.xcodeproj */,
 				C87A12D420504FC9001D9E7C /* Lumberjack.xcodeproj */,
 				C87A12CB20504FAE001D9E7C /* RNBackgroundGeolocation.xcodeproj */,
 				C87A12C420504F95001D9E7C /* RNBackgroundFetch.xcodeproj */,
@@ -814,6 +825,14 @@
 				C87A12EE20504FC9001D9E7C /* CocoaLumberjackSwift.framework */,
 				C87A12F020504FC9001D9E7C /* CocoaLumberjack.framework */,
 				C87A12F220504FC9001D9E7C /* CocoaLumberjackSwift.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C87A131D20514341001D9E7C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C87A133020514341001D9E7C /* libRCTCameraRoll.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -979,6 +998,10 @@
 				{
 					ProductGroup = ADBDB9201DFEBF0600ED6528 /* Products */;
 					ProjectRef = ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */;
+				},
+				{
+					ProductGroup = C87A131D20514341001D9E7C /* Products */;
+					ProjectRef = C87A131C20514341001D9E7C /* RCTCameraRoll.xcodeproj */;
 				},
 				{
 					ProductGroup = C87A12B72050497E001D9E7C /* Products */;
@@ -1398,6 +1421,13 @@
 			remoteRef = C87A12F120504FC9001D9E7C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		C87A133020514341001D9E7C /* libRCTCameraRoll.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTCameraRoll.a;
+			remoteRef = C87A132F20514341001D9E7C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1673,6 +1703,7 @@
 					"\"${PODS_ROOT}/Headers/Public/yoga\"",
 					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/CameraRoll",
 				);
 				INFOPLIST_FILE = placeit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1721,6 +1752,7 @@
 					"\"${PODS_ROOT}/Headers/Public/yoga\"",
 					"$(SRCROOT)/../node_modules/react-native-fcm/ios",
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/CameraRoll",
 				);
 				INFOPLIST_FILE = placeit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

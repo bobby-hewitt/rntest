@@ -135,11 +135,11 @@ FCM.setNotificationCategories([
 
 
 
-export const showLocalNotification = () => {
+export const showLocalNotification = (geofence, body) => {
     FCM.presentLocalNotification({
       id: new Date().valueOf().toString(),                // (optional for instant notification)
-      title: "Test Notification with action",             // as FCM payload
-      body: "Force touch to reply",                       // as FCM payload (required)
+      title: geofence,             // as FCM payload
+      body: body,                       // as FCM payload (required)
       sound: "bell.mp3",                                  // "default" or filename
       priority: "high",                                   // as FCM payload
       click_action: "com.myapp.MyCategory",               // as FCM payload - this is used as category identifier on iOS.

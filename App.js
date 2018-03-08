@@ -21,22 +21,59 @@ import {
   View
 } from 'react-native';
 
+import Login from './App/Login'
+import Photos from './App/Photos'
+
 import {registerKilledListener, registerAppListener, showLocalNotification} from "./helpers/notifications";
 import FCM, {NotificationActionType} from "react-native-fcm";
 
 export default class App extends Component<{}> {
+
+  constructor(){
+    super(props)
+    this.state = {
+      timeOfLastTrigger: 0
+    }
+  }
 
   onError(e){
     console.log(e)
   }
 
   componentWillMount(){
+    let self = this;
+    BackgroundGeolocation.getGeofences(
+      function(geofences){
+        if (geofences){
+          console.log('GEOFENCES found')
+        } else {
+          console.log('No registeded geofences')
+        }
+      }, function(error){
+        console.log(error)
+      }
+    )
     BackgroundGeolocation.on('location', Location.onLocation, this.onError);
+    BackgroundGeolocation.on('geofenceschange', function(event) {
+      var on = event.on;   //<-- new geofences activiated.
+      var off = event.off; //<-- geofences that were de-activated.
+    });
+    BackgroundGeolocation.on('geofence', function(geofence) {
+      
+      if((new Date()).getTime() > self.state.timeOfLastTrigger + (1000 * 60)){
+        showLocalNotification('triggered geofence', geofence.extras.uri)
+        self.setState({timeOfLastTrigger: (new Date()).getTime()})
+      } else {
+        showLocalNotification('NEED TO GROUP', geofence.extras.uri)
+      }
+
+    });
     // Helpers.checkPermissions(0)
   }
 
     async componentDidMount(){
-
+      // showLocalNotification('triggered geofence')
+      Location.configureLocationUpdates()
       registerAppListener(this.props.navigation);
       FCM.getInitialNotification().then(notif => {
         this.setState({
@@ -75,24 +112,8 @@ export default class App extends Component<{}> {
   render() {
     return (
       <View style={styles.container}>
-         <LoginButton
-          readPermissions={['public_profile', 'user_friends']}
-          onLoginFinished={
-            (error, result) => {
-              if (error) {
-                alert("login has error: " + result.error);
-              } else if (result.isCancelled) {
-                alert("login is cancelled.");
-              } else {
-                AccessToken.getCurrentAccessToken().then(
-                  (data) => {
-                    Auth.login(data.accessToken.toString())
-                  }
-                )
-              }
-            }
-          }
-          onLogoutFinished={() => alert("logout.")}/>
+        {/*<Login />*/}
+        <Photos />
       </View>
     );
   }
