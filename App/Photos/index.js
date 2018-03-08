@@ -58,11 +58,10 @@ export default class Photos extends Component<{}> {
           longitude: p.node.location.longitude,
           notifyOnEntry: true,
           notifyOnExit: false,
-          notifyOnDwell: true,
-          loiteringDelay: 30000,   // 30 seconds
           extras: {                // Optional arbitrary meta-data
             zone_id: 1234,
-            uri: p.node.image.uri
+            uri: p.node.image.uri,
+            notify: true,
           }
         }
         geoFences.push(geoFence)
@@ -112,18 +111,18 @@ export default class Photos extends Component<{}> {
       // })
   }
 
-  keyExtractor = (item, index) => item.id;
+  keyExtractor = (item, index) => index;
 
   renderItem(item){
    
     return(
       <Image
-            key={item.item.node.timestamp}
+            key={item}
            style={{
             width: Dimensions.get('window').width,
              height: 300,
            }}
-           source={{ uri: item.item.node.image.uri }}>
+           source={{ uri: item.item}}>
         
 
       </Image>
@@ -133,7 +132,11 @@ export default class Photos extends Component<{}> {
   render() {
     return (
       <View stye={styles.container}>
-        <Text>{this.state.message}</Text>
+        <FlatList
+         keyExtractor={this.keyExtractor}
+          data={this.props.photos}
+          renderItem={this.renderItem}
+        />
       </View>
     );
   }

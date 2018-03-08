@@ -13,6 +13,7 @@ import {
 import MapView from 'react-native-maps'
 import * as Location from './helpers/location'
 import * as Auth from './helpers/auth'
+import { addPhotoToDate, getFromAsync, createKey } from './helpers/async'
 import React, { Component } from 'react';
 import {
   Platform,
@@ -21,18 +22,21 @@ import {
   View
 } from 'react-native';
 
+
 import Login from './App/Login'
 import Photos from './App/Photos'
-
 import {registerKilledListener, registerAppListener, showLocalNotification} from "./helpers/notifications";
 import FCM, {NotificationActionType} from "react-native-fcm";
 
 export default class App extends Component<{}> {
 
-  constructor(){
+  constructor(props){
     super(props)
     this.state = {
-      timeOfLastTrigger: 0
+      timeOfLastTrigger: 0,
+      lastTriggerIdentifier: null,
+      photosToGroup: [],
+      photos:[],
     }
   }
 
@@ -42,6 +46,13 @@ export default class App extends Component<{}> {
 
   componentWillMount(){
     let self = this;
+    getFromAsync(createKey()).then((data) => {
+      self.setState({photos: JSON.parse(data)})
+    })
+    .catch((error) => {
+      return
+    })
+    
     BackgroundGeolocation.getGeofences(
       function(geofences){
         if (geofences){
@@ -62,13 +73,24 @@ export default class App extends Component<{}> {
       
       if((new Date()).getTime() > self.state.timeOfLastTrigger + (1000 * 60)){
         showLocalNotification('triggered geofence', geofence.extras.uri)
-        self.setState({timeOfLastTrigger: (new Date()).getTime()})
+        self.setState({
+          timeOfLastTrigger: (new Date()).getTime(),
+        })
+        addPhotoToDate(geofence.extras.uri, function(data){
+          self.setState({photos: data})
+        })
       } else {
         showLocalNotification('NEED TO GROUP', geofence.extras.uri)
+        addPhotoToDate(geofence.extras.uri, function(data){
+          self.setState({photos: data})
+        })
       }
-
     });
     // Helpers.checkPermissions(0)
+  }
+
+  addPhotoToAsync(geoFence){
+
   }
 
     async componentDidMount(){
@@ -113,7 +135,7 @@ export default class App extends Component<{}> {
     return (
       <View style={styles.container}>
         {/*<Login />*/}
-        <Photos />
+        <Photos photos={this.state.photos}/>
       </View>
     );
   }
