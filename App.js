@@ -48,8 +48,10 @@ export default class App extends Component<{}> {
     let self = this;
     getFromAsync(createKey()).then((data) => {
       self.setState({photos: JSON.parse(data)})
+      console.log('photos returned')
     })
     .catch((error) => {
+      console.log('error returned', error)
       return
     })
     
