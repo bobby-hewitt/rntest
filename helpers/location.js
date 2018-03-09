@@ -14,7 +14,6 @@ export const configureLocationUpdates = () => {
       logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
       stopOnTerminate: false,   // <-- Allow the background-service to continue tracking when user closes the app.
       startOnBoot: true,        // <-- Auto start tracking when device is powered-up.
-      
     }, (state) => {
       console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
 
@@ -41,6 +40,24 @@ export const addGeoFences = (geoFences) => {
         reject(error)
     });
   })
-  
-  
+}
+
+export const addGeofence = (geoFence) => {
+return new Promise((resolve, reject) => {
+    BackgroundGeolocation.addGeofence(geoFence, function() {
+      resolve({success: true})
+    }, function(error) {
+        reject(error)
+    });
+  })
+}
+
+export const removeGeofence = (geofence) => {
+return new Promise((resolve, reject) => {
+    BackgroundGeolocation.removeGeofence(geofence, function() {
+      resolve({success: true})
+    }, function(error) {
+        reject(error)
+    });
+  })
 }

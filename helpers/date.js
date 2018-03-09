@@ -3,7 +3,7 @@ var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const suffixes = ['', 'st', 'nd','rd','th','th','th','th','th','th','th','th','th','th','th','th','th','th','th','th','th','st','nd','rd','th','th','th','th','th','th','th','th']
 
 export const fromTimestamp = (timestamp) => {
-	var date = new Date(timestamp)
+	var date = new Date(parseInt(timestamp * 1000))
 
 	var year = date.getFullYear()
 	var month = date.getMonth()

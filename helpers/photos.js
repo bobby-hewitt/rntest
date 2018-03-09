@@ -48,11 +48,32 @@ var isTest;
     var allPhotos = []
 
     for (var i =0; i < photos.length; i++){
-      const photo = {
-        uri: photos[i].node.image.uri,
-        timestamp: photos[i].node.timestamp
+      if (i === 0){
+        scrollPhotos = []
+        const photo = {
+          uri: photos[i].node.image.uri,
+          timestamp: photos[i].node.timestamp
+        }
+        scrollPhotos.push(photo)
+        scrollPhotos.push(photo)
+        scrollPhotos.push(photo)
+        scrollPhotos.push(photo)
+        scrollPhotos.push(photo)
+        scrollPhotos.push(photo)
+
+
+        allPhotos.push({
+          scrollPhotos,
+          isArray: true,
+        })
+      } else {
+        const photo = {
+          uri: photos[i].node.image.uri,
+          timestamp: photos[i].node.timestamp
+        }
+        allPhotos.push(photo)
       }
-      allPhotos.push(photo)
+      
     }
     callback(allPhotos)
   }
@@ -75,6 +96,7 @@ var isTest;
             zone_id: 1234,
             uri: p.node.image.uri,
             notify: true,
+            timestamp: p.node.timestamp
           }
         }
         geoFences.push(geoFence)

@@ -12,6 +12,7 @@
     "react-native-background-geolocation": "^2.11.0",
     "react-native-fbsdk": "^0.7.0",
     "react-native-fcm": "^14.1.0",
+    "react-native-linear-gradient": "^2.4.0",
     "react-native-maps": "^0.20.1",
     "react-native-permissions": "^1.1.1"
   },

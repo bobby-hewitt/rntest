@@ -14,6 +14,7 @@ import MapView from 'react-native-maps'
 import * as Location from './helpers/location'
 import * as Auth from './helpers/auth'
 import { addPhotoToDate, getFromAsync, createKey } from './helpers/async'
+import { getPlace } from './helpers/api'
 import React, { Component } from 'react';
 import {
   Platform,
@@ -22,7 +23,7 @@ import {
   View
 } from 'react-native';
 
-
+import { clearApp, getAsyncKeys } from './helpers/development'
 import Login from './App/Login'
 import Photos from './App/Photos'
 import {registerKilledListener, registerAppListener, showLocalNotification} from "./helpers/notifications";
@@ -38,6 +39,7 @@ export default class App extends Component<{}> {
       lastTriggerIdentifier: null,
       photosToGroup: [],
       photos:[],
+      geofences: [],
     }
   }
 
@@ -46,9 +48,12 @@ export default class App extends Component<{}> {
   }
 
   componentWillMount(){
+    clearApp()
+    // getAsyncKeys()
+
     let self = this;
     getFromAsync(createKey()).then((data) => {
-      self.setState({photos: JSON.parse(data)})
+      // self.setState({photos: JSON.parse(data)})
       console.log('photos returned')
     })
     .catch((error) => {
@@ -56,46 +61,126 @@ export default class App extends Component<{}> {
       return
     })
     
-    BackgroundGeolocation.getGeofences(
-      function(geofences){
-        if (geofences){
-          console.log('GEOFENCES found')
-        } else {
-          console.log('No registeded geofences')
-        }
-      }, function(error){
-        console.log(error)
-      }
-    )
-    BackgroundGeolocation.on('location', Location.onLocation, this.onError);
+    // BackgroundGeolocation.getGeofences(
+    //   function(geofences){
+    //     if (geofences){
+    //       console.log('GEOFENCES found')
+    //     } else {
+    //       console.log('No registeded geofences')
+    //     }
+    //   }, function(error){
+    //     console.log(error)
+    //   }
+    // )
     BackgroundGeolocation.on('geofenceschange', function(event) {
       var on = event.on;   //<-- new geofences activiated.
       var off = event.off; //<-- geofences that were de-activated.
     });
+
+
+
+
+
+
     BackgroundGeolocation.on('geofence', function(geofence) {
-      
-      if((new Date()).getTime() > self.state.timeOfLastTrigger + (1000 * 60)){
-        showLocalNotification('triggered geofence', geofence.extras.uri)
-        self.setState({
-          timeOfLastTrigger: (new Date()).getTime(),
-        })
-        addPhotoToDate(geofence.extras.uri, function(data){
-          self.setState({photos: data})
-        })
+      //if no geofences have been triggered here
+      const delay = 1000 * 10
+      if((new Date()).getTime() > self.state.timeOfLastTrigger + delay){
+        // showLocalNotification('triggered geofence', geofence.extras.uri)
+
+        self.setInitialGeofenceState(geofence, delay)
       } else {
-        showLocalNotification('NEED TO GROUP', geofence.extras.uri)
-        addPhotoToDate(geofence.extras.uri, function(data){
-          self.setState({photos: data})
-        })
+        // showLocalNotification('NEED TO GROUP', geofence.extras.uri)
+        
+        self.addToGeofenceState(geofence)
+        // addPhotoToDate(geofence.extras.uri, function(data){
+        //   self.setState({photos: data})
+        // })
       }
     });
     // Helpers.checkPermissions(0)
   }
 
+  setInitialGeofenceState(geofence, delay){
+    console.log('setting initial geofence')
+    this.setState({
+      geofences: [geofence],
+      timeOfLastTrigger: (new Date()).getTime()
+    })
+    setTimeout(() => {
+      this.bundleGeofences()
+    },delay)
+  }
+
+  addToGeofenceState(geofence){
+    var newFences = Object.assign([], this.state.geofences)
+    newFences.push(geofence)
+    this.setState({geofences: newFences})
+  }
+
+  bundleGeofences(){
+  //bundle and save photos under one geofence
+    let geofences = Object.assign([], this.state.geofences)
+
+    if (geofences.length > 1){
+
+      newGeofenceData = []
+      for (var i = 0; i < geofences.length; i ++){
+          Location.removeGeofence(geofences[i].identifier)
+          if (geofences[i].extras.isArray){
+            newGeofenceData.append(geofences.extras.photos)
+          } else {
+            let arrItem = {
+              uri: geofences[i].extras.uri,
+              timestamp: geofences[i].extras.timestamp,
+            }
+            newGeofenceData.push(arrItem)
+          }
+          //structure geofences
+        }
+        console.log('THE GEOFENCES', geofences[0].location)
+        getPlace(geofences[0].location.coords.latitude, geofences[0].location.coords.longitude).then((place) => {
+          var geoFence = {
+            identifier: geofences[0].identifier,
+            radius: 50,
+            latitude: geofences[0].location.coords.latitude,
+            longitude: geofences[0].location.coords.longitude,
+            notifyOnEntry: true,
+            notifyOnExit: false,
+            extras: {
+              place: place,                // Optional arbitrary meta-data
+              isArray: true,
+              photos: newGeofenceData
+            }
+          }
+          Location.addGeofence(geoFence).then(() => {
+            showLocalNotification("You have memories here", "You've stumbled upon a photo. Open the app to see it.")
+            console.log('HERE IS THE GEOFENCE', geoFence)
+            this.addToRecord(geoFence)
+            
+          })
+        })
+      } else {
+        showLocalNotification('You have memories here', " Should be single.")
+        this.addToRecord(geofences[0])
+      }
+  }
+
+  addToRecord(geofence){
+    var self = this;
+    this.setState({
+      geofences: null,
+      timeOfLastTrigger: 0,
+    })
+    addPhotoToDate(geofence, function(data){
+      self.setState({photos: data})
+    })
+  }
+
   async componentDidMount(){
     // showLocalNotification('triggered geofence')
     //first value is test
-    initiatePhotos(true, (photos) => {
+    initiatePhotos(false, (photos) => {
       if (photos){
         this.setState({photos})
       }
@@ -133,14 +218,14 @@ export default class App extends Component<{}> {
 
   componentWillUnmount() {
     // Remove BackgroundGeolocation listeners
-    BackgroundGeolocation.un('location', this.onLocation);
+    // BackgroundGeolocation.un('location', this.onLocation);
   }
 
   render() {
     return (
       <View style={styles.container}>
         {/*<Login />*/}
-        <Photos photos={this.state.photos}/>
+        <Photos photos={this.state.photos.reverse()}/>
       </View>
     );
   }

@@ -1,5 +1,4 @@
   import {
-
   AsyncStorage
 } from 'react-native';
 
@@ -8,7 +7,7 @@
     return new Promise((resolve, reject) => {
       AsyncStorage.getItem('@MySuperStore:' + key).then((value) => {
         if (value !== null){
-          resolve(value)
+          resolve(JSON.parse(value))
         } else {
           reject('no value found')
         }
@@ -20,7 +19,7 @@
   }
 
   export const saveToAsync = (key, value) =>{
-    AsyncStorage.setItem('@MySuperStore:' + key, value).catch((error) => {
+    AsyncStorage.setItem('@MySuperStore:' + key, JSON.stringify(value)).catch((error) => {
       console.log(error)
     })
   }
@@ -33,27 +32,24 @@
 
   export const createKey = () =>{
     var date = new Date()
-    var year = date.getYear()
+    var year = date.getFullYear()
     var month = date.getMonth()
     var day = date.getDate()
     return day.toString() + month.toString() + year.toString()
   }
 
-  export const addPhotoToDate = (uri, callback) => {
-    var date = new Date()
-    var year = date.getYear()
-    var month = date.getMonth()
-    var day = date.getDate()
-    var key = day.toString() + month.toString() + year.toString()
+  export const addPhotoToDate = (data, callback) => {
+    const key = createKey()
+
     getFromAsync(key).then((arr) => {
       var newArr = JSON.parse(arr)
-      newArr.push(uri)
+      newArr.push(data)
       saveToAsync(key, JSON.stringify(newArr))
       
       callback(newArr)
     })
     .catch(() => {
-      saveToAsync(key, JSON.stringify([uri]))
-      callback([uri])
+      saveToAsync(key, JSON.stringify([data]))
+      callback([data])
     })
   }
