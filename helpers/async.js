@@ -31,7 +31,7 @@
     })
   }
 
-  export const createKey(){
+  export const createKey = () =>{
     var date = new Date()
     var year = date.getYear()
     var month = date.getMonth()
