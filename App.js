@@ -47,6 +47,7 @@ export default class App extends Component<{}> {
   componentWillMount(){
     let self = this;
     getFromAsync(createKey()).then((data) => {
+      console.log('DATA', data)
       self.setState({photos: JSON.parse(data)})
       console.log('photos returned')
     })
@@ -66,28 +67,28 @@ export default class App extends Component<{}> {
         console.log(error)
       }
     )
-    BackgroundGeolocation.on('location', Location.onLocation, this.onError);
-    BackgroundGeolocation.on('geofenceschange', function(event) {
-      var on = event.on;   //<-- new geofences activiated.
-      var off = event.off; //<-- geofences that were de-activated.
-    });
-    BackgroundGeolocation.on('geofence', function(geofence) {
+    // BackgroundGeolocation.on('location', Location.onLocation, this.onError);
+    // BackgroundGeolocation.on('geofenceschange', function(event) {
+    //   var on = event.on;   //<-- new geofences activiated.
+    //   var off = event.off; //<-- geofences that were de-activated.
+    // });
+    // BackgroundGeolocation.on('geofence', function(geofence) {
       
-      if((new Date()).getTime() > self.state.timeOfLastTrigger + (1000 * 60)){
-        showLocalNotification('triggered geofence', geofence.extras.uri)
-        self.setState({
-          timeOfLastTrigger: (new Date()).getTime(),
-        })
-        addPhotoToDate(geofence.extras.uri, function(data){
-          self.setState({photos: data})
-        })
-      } else {
-        showLocalNotification('NEED TO GROUP', geofence.extras.uri)
-        addPhotoToDate(geofence.extras.uri, function(data){
-          self.setState({photos: data})
-        })
-      }
-    });
+    //   if((new Date()).getTime() > self.state.timeOfLastTrigger + (1000 * 60)){
+    //     showLocalNotification('triggered geofence', geofence.extras.uri)
+    //     self.setState({
+    //       timeOfLastTrigger: (new Date()).getTime(),
+    //     })
+    //     addPhotoToDate(geofence.extras.uri, function(data){
+    //       self.setState({photos: data})
+    //     })
+    //   } else {
+    //     showLocalNotification('NEED TO GROUP', geofence.extras.uri)
+    //     addPhotoToDate(geofence.extras.uri, function(data){
+    //       self.setState({photos: data})
+    //     })
+    //   }
+    // });
     // Helpers.checkPermissions(0)
   }
 
@@ -137,7 +138,7 @@ export default class App extends Component<{}> {
     return (
       <View style={styles.container}>
         {/*<Login />*/}
-        <Photos photos={this.state.photos}/>
+        {/*<Photos photos={this.state.photos}/>*/}
       </View>
     );
   }
