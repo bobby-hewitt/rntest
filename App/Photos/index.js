@@ -1,10 +1,5 @@
 
-import {
-  LoginButton,
-  AccessToken
-} from 'react-native-fbsdk';
 
-import * as Auth from '../../helpers/auth'
 import React, { Component } from 'react';
 import {
   Platform,
@@ -18,124 +13,80 @@ import {
   ScrollView,
   AsyncStorage
 } from 'react-native';
-import { addGeoFences } from '../../helpers/location'
-import { getFromAsync, saveToAsync, removeItem } from '../../helpers/async'
+import LinearGradient from 'react-native-linear-gradient';
+import { fromTimestamp } from '../../helpers/date'
 export default class Photos extends Component<{}> {
-
-
-  constructor(props){
-    super(props)
-    this.state = {
-      photos: [],
-      message: 'hello'
-    }
-  }
-
-
-  checkLastPhoto(){
-      getFromAsync('lastPhotoFromCameraRoll').then((value) => {
-        // this.getPhotos(value)
-        // this.removeItem()
-        this.getPhotos(value)
-
-      })
-      .catch((error) => {
-        this.getPhotos(null)
-      }) 
-  }
-
-  setGeoFences(photos){
-    
-    var geoFences = []
-    
-    for (var i = 0; i < photos.length; i++){
-      const p = photos[i]
-      if (p.node.location.latitude && p.node.location.longitude){
-        var geoFence = {
-          identifier: p.node.image.filename,
-          radius: 50,
-          latitude: p.node.location.latitude,
-          longitude: p.node.location.longitude,
-          notifyOnEntry: true,
-          notifyOnExit: false,
-          extras: {                // Optional arbitrary meta-data
-            zone_id: 1234,
-            uri: p.node.image.uri,
-            notify: true,
-          }
-        }
-        geoFences.push(geoFence)
-      }
-    }
-
-    addGeoFences(geoFences).then((data) => {
-      this.setState({message: data.geofences + ' added from ' + photos.length + ' photos' })
-    }).catch((error) => {
-      this.setState({message: error})
-    })
-  }
-
-  getPhotos(last){
-    var params = {
-      first: 10000,
-      
-      assetType: 'Photos'
-    }
-    if (last){
-      params.after = last
-    }
-    CameraRoll.getPhotos(params).then((p) => {
-      if (p.edges && p.edges.length > 0){
-        console.log('NUMBER OF PHOTOS: ' + p.edges.length)
-        this.setGeoFences(p.edges)
-      } else {
-        console.log('NUMBER OF PHOTOS = 0')
-      }
-      if (p.page_info && p.page_info.end_cursor){
-          saveToAsync('lastPhotoFromCameraRoll', p.page_info.end_cursor)
-      }
-    })
-  }
-
-
-  componentWillMount(){
-    this.checkLastPhoto()
-      // CameraRoll.getPhotos({
-      //    first: 10000,
-      //    assetType: 'Photos',
-      //  }).then((p) => {
-      //   this.setState({photos: p.edges}, () => {
-      //     console.log(p.edges)
-      //   })
-      //   // console.log(p.edges)
-      // })
-  }
 
   keyExtractor = (item, index) => index;
 
   renderItem(item){
-   
+    if (item && item.item && item.item.extras && item.item.extras.isArray){
+      return this.renderScrollView(item)
+    } else if( item && item.item && item.item.extras && item.item.extras.uri){
     return(
-      <Image
-            key={item}
-           style={{
-            width: Dimensions.get('window').width,
-             height: 300,
-           }}
-           source={{ uri: item.item}}>
-        
+      <View 
+        style={styles.container}>
+        <Image
+            key={item.key}
+             style={styles.image}
+             source={{ uri: item.item.extras.uri}}>
+        </Image>
+        <Text 
+          style={styles.text}>
+          {fromTimestamp(item.item.extras.timestamp)}
+        </Text>
+      </View>
+    )
+    } else {
+      return <View />
+    }
+  }
 
-      </Image>
+  renderScrollViewItem(item, isInScrollView){
+    return(
+      <View 
+        style={styles.scrollItemContainer}>
+        <Image
+            key={item.key}
+            style={{
+              width: Dimensions.get('window').width-130,
+              height: 200,}}
+            source={{ uri: item.item.uri}}>
+        </Image>
+        <Text 
+          style={styles.text}>
+          {fromTimestamp(item.item.timestamp)}
+        </Text>
+      </View>
     )
   }
 
+  renderScrollView(item){
+    return(
+      <View 
+        style={styles.scrollViewContainer}>
+        <Text style={styles.title}>{item.item.extras.place ? item.item.extras.place: 'fallback'}</Text>
+        <FlatList
+        style={styles.scrollViewContainer}
+          showHorizontalScrollIndicator={true}
+          horizontal={true}
+          snapToInterval={200}
+          keyExtractor={this.keyExtractor}
+          data={item.item.extras.photos}
+          renderItem={this.renderScrollViewItem}
+        />
+      </View>
+    )
+  }
+
+
   render() {
     return (
-      <View stye={styles.container}>
+      <View stye={styles.pageContainer}>
         <FlatList
-         keyExtractor={this.keyExtractor}
+          keyExtractor={this.keyExtractor}
           data={this.props.photos}
-          renderItem={this.renderItem}
+          renderItem={this.renderItem.bind(this)}
         />
       </View>
     );
@@ -143,19 +94,41 @@ export default class Photos extends Component<{}> {
 }
 
 const styles = StyleSheet.create({
+  text:{
+    textAlign:'center',
+    fontWeight: 'bold',
+    fontSize:20,
+    paddingVertical:7,
+    backgroundColor:'transparent',
+    color: '#242424',
+  },
+  title:{
+    fontWeight: "900",
+    fontSize:30,
+    paddingLeft:15,
+    paddingVertical:7,
+    backgroundColor:'transparent',
+    color: '#242424',
+  },
   container: {
-    flex: 1,
-    
-    backgroundColor: '#F5FCFF',
+    backgroundColor:'#e6e6e6',
+    height:240,
+    marginTop:15,
+    width: Dimensions.get('window').width, 
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  scrollItemContainer: { 
+    backgroundColor:'#e6e6e6',
+    height:240,
+    maxWidth: Dimensions.get('window').width-130,
+    marginLeft:15,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  scrollViewContainer: {
+    marginTop:15,
   },
+  image:{
+    width: Dimensions.get('window').width,
+    borderTopLeftRadius:10,
+    height: 200,
+  }
+  
 });
