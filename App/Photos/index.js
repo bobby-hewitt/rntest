@@ -13,7 +13,7 @@ import {
   ScrollView,
   AsyncStorage
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+// import LinearGradient from 'react-native-linear-gradient';
 import { fromTimestamp } from '../../helpers/date'
 export default class Photos extends Component<{}> {
 
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     fontSize:30,
     paddingLeft:15,
-    paddingVertical:7,
+    paddingTop:15,
     backgroundColor:'transparent',
     color: '#242424',
   },

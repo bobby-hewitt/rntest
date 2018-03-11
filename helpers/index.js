@@ -12,6 +12,7 @@ import {
 
 export const checkPermissions = () => {
 	checkPermission('notification')
+	checkPermission('photo')
 	checkPermission('location', {type: 'always'})
 }
 

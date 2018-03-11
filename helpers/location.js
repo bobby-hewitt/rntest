@@ -18,8 +18,11 @@ export const configureLocationUpdates = () => {
       console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
 
       if (!state.enabled) {
-      
-          BackgroundGeolocation.startGeofences(state1 => {
+        console.log('starting geo')
+         BackgroundGeolocation.start(function() {
+          console.log("- Start success");
+        });
+               BackgroundGeolocation.startGeofences(state1 => {
               console.log('- Start geofences: ', state1);
           });
       }

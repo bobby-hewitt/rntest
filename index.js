@@ -1,4 +1,4 @@
 import { AppRegistry } from 'react-native';
-import App from './App';
+import AppConfig from './AppConfig';
 
-AppRegistry.registerComponent('placeit', () => App);
+AppRegistry.registerComponent('placeit', () => AppConfig);

@@ -1,31 +1,24 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
+
 import BackgroundGeolocation from "react-native-background-geolocation";
 // import * as Helpers from './helpers'
-import {
-  LoginButton,
-  AccessToken
-} from 'react-native-fbsdk';
 
-import MapView from 'react-native-maps'
+import MainNav from './App/MainNav'
+
 import * as Location from './helpers/location'
 import * as Auth from './helpers/auth'
 import { addPhotoToDate, getFromAsync, createKey } from './helpers/async'
 import { getPlace } from './helpers/api'
 import React, { Component } from 'react';
+import Onboard from './App/Onboard'
 import {
   Platform,
   StyleSheet,
   Text,
-  View
+  View,
+  TabBarIOS,
 } from 'react-native';
-
+import firebase from 'firebase'
 import { clearApp, getAsyncKeys } from './helpers/development'
-import Login from './App/Login'
-import Photos from './App/Photos'
 import {registerKilledListener, registerAppListener, showLocalNotification} from "./helpers/notifications";
 import { initiatePhotos } from "./helpers/photos";
 import FCM, {NotificationActionType} from "react-native-fcm";
@@ -40,22 +33,38 @@ export default class App extends Component<{}> {
       photosToGroup: [],
       photos:[],
       geofences: [],
+      route: 'feed',
     }
+  }
+
+    onTabClick(link){
+    console.log('tb clicked')
+    this.setState({route: link})
   }
 
   onError(e){
     console.log(e)
   }
 
-  componentWillMount(){
-    clearApp()
-    // getAsyncKeys()
+  initialiseFirebase(){
+  var config = {
+    apiKey: "AIzaSyC8XK_ubSWBB_IyN4SPY3jNaPmrLOLLw0Y",
+    authDomain: "places-8f3fb.firebaseapp.com",
+    databaseURL: "https://places-8f3fb.firebaseio.com",
+    projectId: "places-8f3fb",
+    storageBucket: "places-8f3fb.appspot.com",
+    messagingSenderId: "216148414726"
+  };
+  firebase.initializeApp(config);
+  }
 
+  componentWillMount(){
+    this.initialiseFirebase()
+    clearApp()
+    getAsyncKeys()
     let self = this;
     getFromAsync(createKey()).then((data) => {
-      console.log('DATA', data)
       self.setState({photos: JSON.parse(data)})
-
       console.log('photos returned')
     })
     .catch((error) => {
@@ -63,35 +72,21 @@ export default class App extends Component<{}> {
       return
     })
     
-
+    BackgroundGeolocation.on('location', Location.onLocation, this.onError);
     BackgroundGeolocation.on('geofenceschange', function(event) {
+      console.log('GEOFENCES CHANGED')
       var on = event.on;   //<-- new geofences activiated.
       var off = event.off; //<-- geofences that were de-activated.
     });
 
-
-
-
-
-
     BackgroundGeolocation.on('geofence', function(geofence) {
-      //if no geofences have been triggered here
       const delay = 1000 * 10
       if((new Date()).getTime() > self.state.timeOfLastTrigger + delay){
-        // showLocalNotification('triggered geofence', geofence.extras.uri)
-
         self.setInitialGeofenceState(geofence, delay)
       } else {
-        // showLocalNotification('NEED TO GROUP', geofence.extras.uri)
-        
         self.addToGeofenceState(geofence)
-        // addPhotoToDate(geofence.extras.uri, function(data){
-        //   self.setState({photos: data})
-        // })
       }
     });
-
-    // Helpers.checkPermissions(0)
   }
 
   setInitialGeofenceState(geofence, delay){
@@ -112,16 +107,14 @@ export default class App extends Component<{}> {
   }
 
   bundleGeofences(){
-  //bundle and save photos under one geofence
+    console.log('bundling geofencew')
     let geofences = Object.assign([], this.state.geofences)
-
     if (geofences.length > 1){
-
       newGeofenceData = []
       for (var i = 0; i < geofences.length; i ++){
           Location.removeGeofence(geofences[i].identifier)
           if (geofences[i].extras.isArray){
-            newGeofenceData.append(geofences.extras.photos)
+            newGeofenceData.concat(geofences[i].extras.photos)
           } else {
             let arrItem = {
               uri: geofences[i].extras.uri,
@@ -171,8 +164,6 @@ export default class App extends Component<{}> {
   }
 
   async componentDidMount(){
-    // showLocalNotification('triggered geofence')
-    //first value is test
     initiatePhotos(false, (photos) => {
       if (photos){
         this.setState({photos})
@@ -190,18 +181,15 @@ export default class App extends Component<{}> {
         }, 500)
       }
     });
-
     try{
       let result = await FCM.requestPermissions({badge: false, sound: true, alert: true});
     } catch(e){
       console.error(e);
     }
-
     FCM.getFCMToken().then(token => {
       console.log("TOKEN (getFCMToken)", token);
       this.setState({token: token || ""})
     });
-
     if(Platform.OS === 'ios'){
       FCM.getAPNSToken().then(token => {
         console.log("APNS TOKEN (getFCMToken)", token);
@@ -211,36 +199,30 @@ export default class App extends Component<{}> {
 
   componentWillUnmount() {
     // Remove BackgroundGeolocation listeners
-    // BackgroundGeolocation.un('location', this.onLocation);
+    BackgroundGeolocation.un('location', this.onLocation);
   }
+
+
 
   render() {
     return (
-      <View style={styles.container}>
-        {/*<Login />*/}
-
-        <Photos photos={this.state.photos.reverse()}/>
-
-      </View>
+      <MainNav 
+        photos={this.state.photos}/>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 8,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  tabBarContainer:{
+    zIndex:100000000,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  tabBar:{
+    flexDirection:'row',
+  }
 });

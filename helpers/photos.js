@@ -8,6 +8,7 @@ import { getFromAsync, saveToAsync, removeItem } from './async'
 var isTest;
 
   export const initiatePhotos = (test, callback) => {
+    console.log('is in initiate photos')
     isTest = test
     checkLastPhoto(callback)
   }
